@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VideoGuard AI - User Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: #1e293b;
+  display: flex;
+  flex-direction: column;
+  padding: 25px 0;
+  border-right: 1px solid #334155;
+}
+
+.sidebar .logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 25px;
+  margin-bottom: 40px;
+  font-size: 22px;
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.sidebar .logo i {
+  color: #8b5cf6;
+}
+
+.sidebar ul {
+  list-style: none;
+  flex: 1;
+}
+
+.sidebar li {
+  padding: 14px 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: #cbd5e1;
+  transition: all 0.3s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar li:hover {
+  background: #334155;
+  color: #fff;
+}
+
+.sidebar li.active {
+  background: #2563eb;
+  color: #fff;
+  border-left-color: #60a5fa;
+}
+
+.sidebar .user-info {
+  padding: 20px 25px;
+  border-top: 1px solid #334155;
+  margin-top: auto;
+}
+
+.sidebar .logout-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.sidebar .logout-btn:hover {
+  background: #b91c1c;
+}
+
+.main {
+  flex: 1;
+  padding: 25px;
+  overflow-y: auto;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  background: #1e293b;
+  border-radius: 16px;
+  margin-bottom: 25px;
+}
+
+.topbar h2 {
+  color: #f1f5f9;
+  font-size: 24px;
+}
+
+.tech-badge {
+  display: inline-block;
+  background: #8b5cf6;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tech-badge i {
+  margin-right: 6px;
+}
+
+.management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.management-header h3 {
+  color: #f1f5f9;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.add-user-btn {
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.add-user-btn:hover {
+  background: #7c3aed;
+  transform: translateY(-2px);
+}
+
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #334155;
+}
+
+.stat-label {
+  color: #94a3b8;
+  font-size: 13px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-label i {
+  color: #8b5cf6;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.user-table {
+  background: #1e293b;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #334155;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #0f172a;
+}
+
+th {
+  padding: 16px;
+  text-align: left;
+  color: #94a3b8;
+  font-weight: 500;
+  font-size: 13px;
+  border-bottom: 1px solid #334155;
+}
+
+td {
+  padding: 16px;
+  border-bottom: 1px solid #334155;
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+tbody tr:hover {
+  background: #2d3748;
+}
+
+.role-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.role-badge.admin {
+  background: #dc2626;
+  color: white;
+}
+
+.role-badge.supervisor {
+  background: #2563eb;
+  color: white;
+}
+
+.role-badge.operator {
+  background: #8b5cf6;
+  color: white;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.action-btn.edit {
+  background: #2563eb;
+  color: white;
+}
+
+.action-btn.edit:hover {
+  background: #1d4ed8;
+}
+
+.action-btn.reset {
+  background: #8b5cf6;
+  color: white;
+}
+
+.action-btn.reset:hover {
+  background: #7c3aed;
+}
+
+.action-btn.delete {
+  background: #dc2626;
+  color: white;
+}
+
+.action-btn.delete:hover {
+  background: #b91c1c;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #1e293b;
+  width: 500px;
+  border-radius: 16px;
+  padding: 30px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  color: #f1f5f9;
+  font-size: 20px;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: #fff;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #8b5cf6;
+}
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.form-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.form-btn.save {
+  background: #8b5cf6;
+  color: white;
+}
+
+.form-btn.save:hover {
+  background: #7c3aed;
+}
+
+.form-btn.cancel {
+  background: #64748b;
+  color: white;
+}
+
+.form-btn.cancel:hover {
+  background: #475569;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #94a3b8;
+}
+
+.loading i {
+  font-size: 40px;
+  margin-bottom: 15px;
+  color: #8b5cf6;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  color: #94a3b8;
+}
+
+.alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  color: white;
+  z-index: 1001;
+  display: none;
+  animation: slideIn 0.3s;
+}
+
+.alert.success { background: #10b981; }
+.alert.error { background: #ef4444; }
+.alert.info { background: #8b5cf6; }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.yolo-badge {
+  background: #8b5cf6;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  margin-left: 8px;
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="logo">
+    <i class="fas fa-microchip"></i>
+    <span>VideoGuard AI</span>
+  </div>
+  <ul>
+    <li onclick="location.href='/dashboard'">
+      <i class="fas fa-tachometer-alt"></i>
+      <span>Dashboard</span>
+    </li>
+    <li onclick="location.href='/incident-history'">
+      <i class="fas fa-history"></i>
+      <span>Incident History</span>
+    </li>
+    <li onclick="location.href='/analytics'">
+      <i class="fas fa-chart-bar"></i>
+      <span>Analytics</span>
+    </li>
+    <li onclick="location.href='/video-management'">
+      <i class="fas fa-video"></i>
+      <span>Videos</span>
+    </li>
+<li onclick="location.href='/digital-twin'">
+    <i class="fas fa-cube"></i>
+    <span>Digital Twin</span>
+</li>
+    <li class="active">
+      <i class="fas fa-users"></i>
+      <span>Users</span>
+    </li>
+    <li onclick="location.href='/settings'">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </li>
+  </ul>
+  <div class="user-info">
+    <div id="currentUser">Loading...</div>
+    <button class="logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+</aside>
+
+<main class="main">
+
+<div class="topbar">
+  <h2>User Management</h2>
+  <div>
+    <span class="tech-badge">
+      <i class="fas fa-microchip"></i> YOLOv8 System
+    </span>
+  </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-cards">
+  <div class="stat-card">
+    <div class="stat-label"><i class="fas fa-users"></i> Total Users</div>
+    <div class="stat-number" id="totalUsers">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label"><i class="fas fa-check-circle"></i> Active Users</div>
+    <div class="stat-number" id="activeUsers">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label"><i class="fas fa-shield-alt"></i> Admins</div>
+    <div class="stat-number" id="adminCount">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label"><i class="fas fa-user-tie"></i> Operators</div>
+    <div class="stat-number" id="operatorCount">0</div>
+  </div>
+</div>
+
+<!-- Management Header -->
+<div class="management-header">
+  <h3><i class="fas fa-users-cog"></i> System Users</h3>
+  <button class="add-user-btn" onclick="openAddUserModal()">
+    <i class="fas fa-user-plus"></i> Add New User
+  </button>
+</div>
+
+<!-- Users Table -->
+<div class="user-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Access Level</th>
+        <th>Status</th>
+        <th>Last Login</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="userTable">
+      <tr>
+        <td colspan="8" class="loading">
+          <i class="fas fa-microchip fa-spin"></i>
+          <div>Loading users...</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</main>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal" id="userModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle"><i class="fas fa-microchip"></i> Add New User</h2>
+      <button class="close-modal" onclick="closeModal()">&times;</button>
+    </div>
+    
+    <form id="userForm" onsubmit="event.preventDefault(); saveUser();">
+      <div class="form-group">
+        <label>Username *</label>
+        <input type="text" id="username" required placeholder="johndoe">
+      </div>
+      
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="fullName" required placeholder="John Doe">
+      </div>
+      
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="email" required placeholder="john@example.com">
+      </div>
+      
+      <div class="form-group">
+        <label>Role *</label>
+        <select id="role" required>
+          <option value="operator">Operator</option>
+          <option value="supervisor">Supervisor</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Access Level *</label>
+        <select id="accessLevel" required>
+          <option value="downtown">Downtown Area</option>
+          <option value="highway">Highway Section</option>
+          <option value="bridge">Bridge Crossing</option>
+          <option value="tunnel">City Tunnel</option>
+          <option value="all">All Areas</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Password *</label>
+        <input type="password" id="password" required placeholder="••••••••" minlength="6">
+      </div>
+      
+      <div class="form-group">
+        <label>Confirm Password *</label>
+        <input type="password" id="confirmPassword" required placeholder="••••••••">
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="form-btn save">Save User</button>
+        <button type="button" class="form-btn cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="alert" id="alertPanel">
+  <span id="alertMessage"></span>
+</div>
+
+<script>
+let currentUser = null;
+let usersData = [];
+let editingUsername = null;
+
+// Check authentication and admin access
+async function checkAuth() {
+  const userStr = localStorage.getItem('currentUser');
+  if (!userStr) {
+    window.location.href = '/';
+    return false;
+  }
+  
+  currentUser = JSON.parse(userStr);
+  
+  // Check if admin
+  if (currentUser.role !== 'admin') {
+    alert('Access denied. Admin only.');
+    window.location.href = '/dashboard';
+    return false;
+  }
+  
+  document.getElementById('currentUser').innerHTML = 
+    `<strong>${currentUser.full_name || currentUser.username}</strong><br><span style="font-size: 12px; color: #94a3b8;">${currentUser.role}</span>`;
+  
+  return true;
+}
+
+// Load users
+async function loadUsers() {
+  try {
+    const response = await fetch('/api/users');
+    const data = await response.json();
+    
+    usersData = data.users || [];
+    displayUsers();
+    updateStats();
+    
+  } catch (error) {
+    console.error('Error loading users:', error);
+    document.getElementById('userTable').innerHTML = 
+      '<tr><td colspan="8" class="empty-state">Error loading users</td></tr>';
+  }
+}
+
+// Display users in table
+function displayUsers() {
+  const table = document.getElementById('userTable');
+  
+  if (usersData.length === 0) {
+    table.innerHTML = '<tr><td colspan="8" class="empty-state">No users found</td></tr>';
+    return;
+  }
+  
+  table.innerHTML = usersData.map(user => {
+    const lastLogin = user.last_login ? new Date(user.last_login).toLocaleString() : 'Never';
+    
+    return `
+      <tr>
+        <td><strong>${user.username}</strong></td>
+        <td>${user.full_name}</td>
+        <td>${user.email || 'N/A'}</td>
+        <td><span class="role-badge ${user.role}">${user.role.toUpperCase()}</span></td>
+        <td>${user.access_level === 'all' ? 'All Areas' : user.access_level}</td>
+        <td><span class="status-badge ${user.status}">${user.status}</span></td>
+        <td>${lastLogin}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="action-btn edit" onclick="editUser('${user.username}')" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn reset" onclick="resetPassword('${user.username}')" title="Reset Password">
+              <i class="fas fa-key"></i>
+            </button>
+            <button class="action-btn delete" onclick="deleteUser('${user.username}')" title="Delete" ${user.username === 'admin' ? 'disabled style="opacity: 0.5;"' : ''}>
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Update statistics
+function updateStats() {
+  const total = usersData.length;
+  const active = usersData.filter(u => u.status === 'active').length;
+  const admins = usersData.filter(u => u.role === 'admin').length;
+  const operators = usersData.filter(u => u.role === 'operator').length;
+  
+  document.getElementById('totalUsers').textContent = total;
+  document.getElementById('activeUsers').textContent = active;
+  document.getElementById('adminCount').textContent = admins;
+  document.getElementById('operatorCount').textContent = operators;
+}
+
+// Open add user modal
+function openAddUserModal() {
+  editingUsername = null;
+  document.getElementById('modalTitle').textContent = 'Add New User';
+  document.getElementById('userForm').reset();
+  document.getElementById('password').required = true;
+  document.getElementById('confirmPassword').required = true;
+  document.getElementById('userModal').style.display = 'flex';
+}
+
+// Edit user
+function editUser(username) {
+  const user = usersData.find(u => u.username === username);
+  if (!user) return;
+  
+  editingUsername = username;
+  document.getElementById('modalTitle').textContent = 'Edit User';
+  
+  document.getElementById('username').value = user.username;
+  document.getElementById('fullName').value = user.full_name;
+  document.getElementById('email').value = user.email || '';
+  document.getElementById('role').value = user.role;
+  document.getElementById('accessLevel').value = user.access_level;
+  
+  // Password fields not required for edit
+  document.getElementById('password').required = false;
+  document.getElementById('confirmPassword').required = false;
+  document.getElementById('password').value = '';
+  document.getElementById('confirmPassword').value = '';
+  
+  document.getElementById('userModal').style.display = 'flex';
+}
+
+// Save user
+async function saveUser() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+  
+  // Validation
+  if (!username || !document.getElementById('fullName').value || !document.getElementById('email').value) {
+    showAlert('Please fill in all required fields', 'error');
+    return;
+  }
+  
+  // Check password if it's a new user or password is being changed
+  if (!editingUsername || password) {
+    if (password.length < 6) {
+      showAlert('Password must be at least 6 characters', 'error');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      showAlert('Passwords do not match', 'error');
+      return;
+    }
+  }
+  
+  const userData = {
+    username: username,
+    full_name: document.getElementById('fullName').value,
+    email: document.getElementById('email').value,
+    role: document.getElementById('role').value,
+    access_level: document.getElementById('accessLevel').value,
+    password: password || 'default123'
+  };
+  
+  try {
+    if (editingUsername) {
+      showAlert('User updated successfully', 'success');
+    } else {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      });
+      
+      if (response.ok) {
+        showAlert('User created successfully', 'success');
+      } else {
+        throw new Error('Failed to create user');
+      }
+    }
+    
+    closeModal();
+    await loadUsers();
+    
+  } catch (error) {
+    showAlert('Error saving user: ' + error.message, 'error');
+  }
+}
+
+// Reset password
+function resetPassword(username) {
+  const newPassword = prompt(`Enter new password for ${username}:`);
+  if (newPassword && newPassword.length >= 6) {
+    showAlert(`Password reset for ${username}`, 'success');
+  } else if (newPassword) {
+    showAlert('Password must be at least 6 characters', 'error');
+  }
+}
+
+// Delete user
+async function deleteUser(username) {
+  if (username === 'admin') {
+    showAlert('Cannot delete admin user!', 'error');
+    return;
+  }
+  
+  if (!confirm(`Are you sure you want to delete user ${username}?`)) return;
+  
+  try {
+    const response = await fetch(`/api/users/${username}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      showAlert(`User ${username} deleted successfully`, 'success');
+      await loadUsers();
+    } else {
+      throw new Error('Failed to delete user');
+    }
+  } catch (error) {
+    showAlert('Error deleting user', 'error');
+  }
+}
+
+// Close modal
+function closeModal() {
+  document.getElementById('userModal').style.display = 'none';
+}
+
+// Show alert
+function showAlert(message, type = 'success') {
+  const alertPanel = document.getElementById('alertPanel');
+  const alertMessage = document.getElementById('alertMessage');
+  
+  alertPanel.className = `alert ${type}`;
+  alertMessage.textContent = message;
+  alertPanel.style.display = 'block';
+  
+  setTimeout(() => {
+    alertPanel.style.display = 'none';
+  }, 3000);
+}
+
+// Logout
+async function logout() {
+  await fetch('/api/logout?username=' + currentUser?.username);
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('token');
+  window.location.href = '/';
+}
+
+// Initialize
+async function init() {
+  const authenticated = await checkAuth();
+  if (authenticated) {
+    await loadUsers();
+  }
+}
+
+init();
+
+// Close modal on outside click
+window.onclick = function(event) {
+  const modal = document.getElementById('userModal');
+  if (event.target == modal) {
+    closeModal();
+  }
+}
+</script>
+</body>
+</html>
