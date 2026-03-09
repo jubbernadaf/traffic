@@ -1,9 +1,9 @@
 services:
   - type: web
     name: traffic-2
-    runtime: python
+    env: python
     region: oregon
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     plan: free
-    pythonVersion: 3.11.11
+    runtime: python-3.11  # Alternative syntax
